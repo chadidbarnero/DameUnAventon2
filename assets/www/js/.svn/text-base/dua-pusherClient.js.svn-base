@@ -1,0 +1,52 @@
+( function( $ ) {
+	
+  var CONFIG = {
+			PUSHER: {
+		    APP_KEY: 'c1c5e53e2c8e5295a772'
+			}
+	};
+	
+	document.addEventListener("deviceready", onDeviceReady_, false);
+
+  function onDeviceReady_() {
+  	
+  	// Get device info
+    var deviceInfo = 	'Device Name: '     + device.name     + '<br />' + 
+									    'Device Cordova: '  + device.cordova  + '<br />' + 
+									    'Device Platform: ' + device.platform + '<br />' + 
+									    'Device UUID: '     + device.uuid     + '<br />' + 
+									    'Device Version: '  + device.version  + '<br />';
+  	
+  	$('#deviceProperties').html(deviceInfo)
+  	
+  	// Connect                  
+  	var pusher = new Pusher('c1c5e53e2c8e5295a772');
+  	pusher.connection.bind('state_change', connectionStateChange);
+  	
+  	function connectionStateChange(state) {
+  		alert(state.current);
+  	}
+  	
+  	// Subscribe
+  	var channel = pusher.subscribe('user-' + window.localStorage.getItem("fbUserId"));
+  	channel.bind('pusher:subscription_succeeded', subscriptionSucceeded);
+  	
+  	function subscriptionSucceeded() {
+  		alert("subscriptionSucceeded");
+  	}
+  	
+  	channel.bind('rides', handleMyEvent);
+  	
+  	function handleMyEvent( data ) {
+  		alert(JSON.stringify(data, null, 2));
+  	}
+  	
+  }
+  
+} )( jQuery );
+
+Pusher.log = function( msg ) {
+	if( window.console && window.console.log ) {
+		window.console.log( msg );
+	}
+};

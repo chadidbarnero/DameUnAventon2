@@ -1,0 +1,520 @@
+			 /*FB.Event.subscribe('auth.login', function(response) {
+                               alert('auth.login event');
+                               });
+            
+            FB.Event.subscribe('auth.logout', function(response) {
+                               alert('auth.logout event');
+                               });*/
+            
+            /*FB.Event.subscribe('auth.sessionChange', function(response) {
+                               alert('auth.sessionChange event');
+                               });
+            
+            FB.Event.subscribe('auth.statusChange', function(response) {
+                               alert('auth.statusChange event');
+                               });*/
+            
+            /*function getSession() {
+                alert("session: " + JSON.stringify(FB.getSession()));
+            }
+            */
+
+			
+			// para web mobile
+            /*window.onLoad=FB.init({
+							  appId      : '234586436647660', // App ID
+							  channelUrl : 'channel.html', // Channel File
+							  status     : true, // check login status
+							  cookie     : true, // enable cookies to allow the server to access the session
+							  xfbml      : true  // parse XFBML
+							});*/
+			
+			//FB.init({ appId: "132921496839607", nativeInterface: CDV.FB, useCachedDialogs: false });
+			
+			//date time picker
+			$("#fechaPA").scroller({ preset: 'datetime' }); 
+			$("#fechaDA").scroller({ preset: 'datetime' }); 
+
+			//PUSHER TEST
+			   //$('#deviceProperties').html(deviceInfo)
+
+
+			/*function openPusherConnection(){   
+			
+			// Connect
+				var pusher = new Pusher('c1c5e53e2c8e5295a772');
+				pusher.connection.bind('state_change', connectionStateChange);
+				
+				function connectionStateChange(state) {
+					alert("Pusher: connectionStateChange:" + state.current);
+				}
+				
+				// Subscribe
+				var channel = pusher.subscribe('user-' + window.localStorage.getItem("fbUserId"));
+				channel.bind('pusher:subscription_succeeded', subscriptionSucceeded);
+				
+				function subscriptionSucceeded() {
+					$('#subscriptionStatus').html('succeeded');
+					alert("Pusher: subscriptionSucceeded");
+				}
+				
+				channel.bind('rides', handleMyEvent);
+				
+				function handleMyEvent( data ) {
+				    alert("Pusher: " +data);
+					$('#myEventData').append('<pre>' + JSON.stringify(data, null, 2) + '</pre>');
+				}
+			   
+			}*/
+			
+            function getLoginStatus() {
+                FB.getLoginStatus(function(response) {
+                                  if (response.status == 'connected') {
+                                  alert('logged in');
+                                  } else {
+                                  alert('not logged in');
+                                  }
+                                  });
+            }
+            var friendIDs = [];
+			
+			
+            function getFriendsFB() {
+				$('#friendsList').empty();
+                FB.api('/me/friends', { fields: 'id, name, picture' },  function(response) {
+                       if (response.error) {
+					       alert(JSON.stringify(response.error));
+                       } else {
+						   response.data.forEach(function(item) {
+								$('#friendsList').append('<li><a>' +
+								'<img src="' + item.picture + '"/>' +
+								//'<input type="checkbox" name="'+ item.id +'"/>' 
+								'<h4>' + item.name + '</h4>' +
+								'<p>' + item.name + '</p></a></li>');
+								}
+							);
+							$('#friendsList').listview('refresh');                                            
+                       }
+						/*var friends = response.data;
+						console.log(friends.length); 
+						for (var k = 0; k < friends.length && k < 200; k++) {
+							var friend = friends[k];
+							var index = 1;
+
+							friendIDs[k] = friend.id;
+							//friendsInfo[k] = friend;
+						}
+						console.log("friendId's: "+friendIDs);*/
+                       });
+            }
+            
+            function logout() {
+                FB.logout(function(response) {
+                          alert('logged out');
+                          });
+            }
+            
+            function login() {
+                FB.login(
+                         function(response) {
+                         if (response.authResponse) {
+							 console.log('logged in');
+							 window.localStorage.setItem("fbUserId", response.authResponse.userId);
+							 //alert("facebook id: " + window.localStorage.getItem("fbUserId"));
+							 $(location).attr('href',"#home");
+							 //alert('logged in');
+                         } else {
+							alert('not logged in');
+                         }
+                         },
+                         { scope: "email,publish_stream" }
+                         );
+				probarPusher();
+				//pruebas web: comentar para android
+				//$(location).attr('href',"#home");	
+            }
+			
+			
+			function facebookWallPost() {
+			    console.log('facebookWallPost');
+				var params = {
+					message: 'Únete a mi red en dame un aventón',
+				    method: 'stream.publish',
+				    name: 'Dame un aventon!',
+				    link: 'www.dameunaventon.com/Friends/Pending?userId=' + window.localStorage.getItem("fbUserId"),
+				    //picture: 'http://fbrell.com/f8.jpg',
+				    caption: 'Reference Documentation',
+				    //description: 'Nueva aplicacion.'
+				  };
+				//console.log(params);
+			    //FB.ui(params, function(obj) { console.log(obj);});
+				FB.api('/me/feed', 'post', params, function(response) {
+				  if (!response || response.error) {
+					alert('Error posteando automaticamente');
+				  } else {
+					alert('Has invitado a tus amigos a DameUnAventon: ' + response);
+				  }
+				 });     
+			}
+			
+			
+			function facebookInboxPost() {
+			    console.log('facebookWallPost');
+				var params = {
+					message: 'Únete a mi red en dame un aventón',
+				    method: 'send',
+				    name: 'Dame un aventon!',
+				    link: 'www.dameunaventon.com/Friends/Pending?userId=' + window.localStorage.getItem("fbUserId"),
+					to: window.localStorage.getItem("fbUserId"),
+				    //picture: 'http://fbrell.com/f8.jpg',
+				    caption: 'Reference Documentation',
+				    //description: 'Nueva aplicacion.'
+				  };
+				//console.log(params);
+			    //FB.ui(params, function(obj) { console.log(obj);});
+				FB.api('/me/feed', 'post', params, function(response) {
+				  if (!response || response.error) {
+					alert('Error posteando automaticamente');
+				  } else {
+					alert('Has invitado a tus amigos a DameUnAventon: ' + response);
+				  }
+				 });     
+			}
+            
+			function publishStoryFriend() {
+				randNum = Math.floor ( Math.random() * friendIDs.length ); 
+
+				var friendID = friendIDs[randNum];
+				if (friendID == undefined){
+					alert('please click the me button to get a list of friends first');
+				}else{
+			    	console.log("friend id: " + friendID );
+			        console.log('Opening a dialog for friendID: ', friendID);
+			        var params = {
+			        	method: 'feed',
+			            to: friendID.toString(),
+			            name: 'Facebook Dialogs',
+			            link: 'https://developers.facebook.com/docs/reference/dialogs/',
+			            picture: 'http://fbrell.com/f8.jpg',
+			            caption: 'Reference Documentation',
+			            description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
+			     	};
+					FB.ui(params, function(obj) { console.log(obj);});
+			    }
+			}
+			
+			function mapa(){
+				window.location.replace('map.html');
+			}
+			
+			function pedirAv(){	
+				//console.log('Entro a pedirAventon: ' + "http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Ride/requestRide?startingVenue="+$('#origenPA').val()+"&startingPoint="+window.localStorage.getItem('llOrigenPA')+"&endingVenue="+$('#destinoPA').val()+"&endPoint="+window.localStorage.getItem('llDestinoPA')+"&dateTime="+$("#fechaPA").val()+"&friendsList=null"+"&idUserRequesting="+window.localStorage.getItem('fbUserId'));
+				window.localStorage.setItem("fbUserId","2");
+				var str_url="http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Ride/requestRide?startingVenue="+$('#origenPA').val()+"&startingPoint="+window.localStorage.getItem('llOrigenPA')+"&endingVenue="+$('#destinoPA').val()+"&endPoint="+window.localStorage.getItem('llDestinoPA')+"&dateTime="+$("#fechaPA").val()+"&friendsList=null"+"&idUserRequesting="+window.localStorage.getItem('fbUserId');
+				str_url=str_url.replace("#","%23");
+				try{
+							$.ajax({ url: str_url
+									, jsonpCallback: "pedirAvCallback"
+									, async: false
+									, type: "GET"
+									, dataType: "jsonp"
+							}); 	
+				}
+				catch(err){
+					alert(err.message);
+				}
+			}
+			
+			function darAv(){	
+				//console.log('Entro a ofrecerAventon: ' + "http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Ride/requestRide?startingVenue="+$('#origenDA').val()+"&startingPoint="+window.localStorage.getItem('llOrigenDA')+"&endingVenue="+$('#destinoDA').val()+"&endPoint="+window.localStorage.getItem('llDestinoDA')+"&dateTime="+$("#fechaDA").val()+"&friendsList=null"+"&idUserRequesting="+window.localStorage.getItem('fbUserId'));
+				//alert('Entro a ofrecerAventon: ' + "http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Ride/offerRide?startingVenue="+$('#origenDA').val()+"&startingPoint="+window.localStorage.getItem('llOrigenDA')+"&endingVenue="+$('#destinoDA').val()+"&endPoint="+window.localStorage.getItem('llDestinoDA')+"&dateTime="+$("#fechaDA").val()+"&friendsList=null"+"&idUserRequesting="+window.localStorage.getItem('fbUserId'));
+				window.localStorage.setItem("fbUserId","2");
+				var str_url="http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Ride/offerRide?startingVenue="+$('#origenDA').val()+"&startingPoint="+window.localStorage.getItem('llOrigenDA')+"&endingVenue="+$('#destinoDA').val()+"&endPoint="+window.localStorage.getItem('llDestinoDA')+"&dateTime="+$("#fechaDA").val()+"&friendsList=null"+"&idUserRequesting="+window.localStorage.getItem('fbUserId');
+				str_url=str_url.replace("#","%23");
+				try{
+							$.ajax({ url: str_url
+									, jsonpCallback: "darAvCallback"
+									, async: false
+									, type: "GET"
+									, dataType: "jsonp"
+							}); 	
+				}
+				catch(err){
+					alert(err.message);
+				}
+			}
+			
+			function pedirAvCallback(json){
+				  console.log("fafafa");
+				  alert("fafafa");
+				  alert(json.offerRideResult);
+			}
+			
+			function darAvCallback(json){
+				  console.log("fafafa");
+				  alert("fafafa");
+				  alert(json.offerRideResult);
+			}
+				
+			function getDuaFriends(){
+				console.log('entro a getFriends');
+				$('#duaFriendsList').empty();
+                $.ajax({
+						type: "GET",
+						url: "http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Account/getFriendsList/" + "613135170",
+						dataType: "jsonp",
+						jsonpCallback: "duaFriendsJsonpCallback",
+						async: false
+				});
+			}
+			
+			function duaFriendsJsonpCallback(json) {
+				$('#duaFriendsList').empty();
+			   if (json.error) {
+				   alert(JSON.stringify(json.error));
+			   } else {
+				   $.each(json.getFriendsListResult,(function(i,item) {
+						$('#duaFriendsList').append('<li><a id="' + item.AuthKey + '" href="#friendsDetailsPage" onclick=getUserDetails(this.id)>' +
+						'<img src="' + item.PhotoURL + '"/>' +
+						//'<input type="checkbox" name="'+ item.id +'"/>' 
+						'<h4>' + item.Nickname + '</h4>' +
+						'<p>' + item.Name + '</p></a></li>');
+						}
+					));
+					
+					$('#duaFriendsList').listview('refresh');                                            
+			   }
+			}
+            
+			function getUserDetails(userId){
+				console.log('entro a getUserDetails con id:' + userId);
+				
+				$('#userPic').attr("src",null);
+				$('#fullName').text("");
+				$('#email').text("");
+				$('#other').text("");
+				
+                $.ajax({
+						type: "GET",
+						url: "http://www.queserumora.com/duas/DameUnAventonServices.svc/json/Account/getUserByAuthKey/" + userId,
+						dataType: "jsonp",
+						jsonpCallback: "userDetailsJsonpCallback",
+						async: false
+				});
+			}
+			
+			function userDetailsJsonpCallback(json){
+			   $('#userPic').attr("src",json.getProfileResult.PhotoURL);
+			   $('#fullName').text(json.getProfileResult.Name);
+			   $('#email').text(json.getProfileResult.eMail);
+			   $('#other').text("Conductor: " +json.getProfileResult.Driver + " Pasajero: " + json.getProfileResult.Passenger);
+				
+			}
+			
+			function selectVenueOrigenPA(venueName,venueLocation,locLatLng){
+				venueLocation=venueLocation.replace("undefined"," ");
+				$('#origenPA').val(venueName+', '+venueLocation);
+				window.localStorage.setItem("llOrigenPA", locLatLng);
+				$.mobile.sdCurrentDialog.close();
+			}
+			
+			function selectVenueDestinoPA(venueName,venueLocation,locLatLng){
+				venueLocation=venueLocation.replace("undefined"," ");
+				$('#destinoPA').val(venueName+', '+venueLocation);
+				window.localStorage.setItem("llDestinoPA", locLatLng);
+				$.mobile.sdCurrentDialog.close();
+			}
+			
+			function selectVenueOrigenDA(venueName,venueLocation,locLatLng){
+				venueLocation=venueLocation.replace("undefined"," ");
+				$('#origenDA').val(venueName+', '+venueLocation);
+				window.localStorage.setItem("llOrigenDA", locLatLng);
+				$.mobile.sdCurrentDialog.close();
+			}
+			
+			function selectVenueDestinoDA(venueName,venueLocation,locLatLng){
+				$('#destinoDA').val(venueName+', '+venueLocation);
+				window.localStorage.setItem("llDestinoDA", locLatLng);
+				$.mobile.sdCurrentDialog.close();
+			}
+			 			
+			function getNearVenuesOrigen(){
+				console.log('entro a getNearVenues');
+				var html_text = '<ul id="peterete" name="peterete">';
+				try{
+				$.getJSON('https://api.foursquare.com/v2/venues/search?ll=4.6838877,-74.070328&client_id=2POUFAUU4ZBJ2MTDOY3S2YHR2NIT52FYW0LUTPHBMNTJFJNQ&client_secret=YFDZI1YWV3ZI5S5SPM2DZJEQIEBPIDJ5XFZBWTIKIQZVQNYM&v=20120101' + '&query=' +  $('#origenPA').val(),
+					function(data) {
+						$.each(data.response.venues, function(i,venue){
+						    /*$('#venueListPA').append('<li><a><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>');*/
+							html_text = html_text + '<li><a rel="'+venue.location.lat+'|'+venue.location.lng+'" id="'+venue.name+'" name="'+ venue.location.address +'" onClick="selectVenueOrigenPA(this.id,this.name,this.rel)"><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>';
+					   });		   
+					   $('<div>').simpledialog2({
+								mode: 'blank',
+								headerText: 'Escoje el destino:',
+								headerClose: true,
+								blankContent: 
+								  html_text + '</ul>' +
+								  "<a rel='close' data-role='button' href='#' >Cerrar</a>"
+							});
+						$('#peterete').listview(); 
+				});	
+				}
+				catch(err){alert(err.message);}
+			}
+			
+			function getNearVenuesDestino(){
+				console.log('entro a getNearVenues');
+				var html_text = '<ul id="peterete" name="peterete">';
+				try{
+				$.getJSON('https://api.foursquare.com/v2/venues/search?ll=4.6838877,-74.070328&client_id=2POUFAUU4ZBJ2MTDOY3S2YHR2NIT52FYW0LUTPHBMNTJFJNQ&client_secret=YFDZI1YWV3ZI5S5SPM2DZJEQIEBPIDJ5XFZBWTIKIQZVQNYM&v=20120101' + '&query=' +  $('#destinoPA').val(),
+				function(data) {
+						$.each(data.response.venues, function(i,venue){
+							html_text = html_text + '<li><a rel="'+venue.location.lat+'|'+venue.location.lng+'" id="'+venue.name+'" name="'+ venue.location.address +'" onClick="selectVenueDestinoPA(this.id,this.name,this.rel)"><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>';
+					   });		   
+					   $('<div>').simpledialog2({
+								mode: 'blank',
+								headerText: 'Escoje el destino:',
+								headerClose: true,
+								blankContent: 
+								  html_text + '</ul>' +
+								  "<a rel='close' data-role='button' href='#' >Cerrar</a>"
+							});
+						$('#peterete').listview(); 
+				});
+				}
+				catch(err){alert(err.message);}
+			}
+			
+			function getNearVenuesOrigenDA(){
+				console.log('entro a getNearVenues');
+				var html_text = '<ul id="peterete" name="peterete">';
+				try{
+				$.getJSON('https://api.foursquare.com/v2/venues/search?ll=4.6838877,-74.070328&client_id=2POUFAUU4ZBJ2MTDOY3S2YHR2NIT52FYW0LUTPHBMNTJFJNQ&client_secret=YFDZI1YWV3ZI5S5SPM2DZJEQIEBPIDJ5XFZBWTIKIQZVQNYM&v=20120101' + '&query=' +  $('#origenDA').val(),
+					function(data) {
+						$.each(data.response.venues, function(i,venue){
+							html_text = html_text + '<li><a rel="'+venue.location.lat+'|'+venue.location.lng+'" id="'+venue.name+'" name="'+ venue.location.address +'" onClick="selectVenueOrigenDA(this.id,this.name,this.rel)"><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>';
+					   });		   
+					   $('<div>').simpledialog2({
+								mode: 'blank',
+								headerText: 'Escoje el destino:',
+								headerClose: true,
+								blankContent: 
+								  html_text + '</ul>' +
+								  "<a rel='close' data-role='button' href='#' >Cerrar</a>"
+							});
+						$('#peterete').listview(); 
+				});	
+				}
+				catch(err){alert(err.message);}
+			}
+			
+			function getNearVenuesDestinoDA(){
+				console.log('entro a getNearVenues');
+				var html_text = '<ul id="peterete" name="peterete">';
+				try{
+				$.getJSON('https://api.foursquare.com/v2/venues/search?ll=4.6838877,-74.070328&client_id=2POUFAUU4ZBJ2MTDOY3S2YHR2NIT52FYW0LUTPHBMNTJFJNQ&client_secret=YFDZI1YWV3ZI5S5SPM2DZJEQIEBPIDJ5XFZBWTIKIQZVQNYM&v=20120101' + '&query=' +  $('#destinoDA').val(),
+					function(data) {
+						$.each(data.response.venues, function(i,venue){
+						    /*$('#venueListPA').append('<li><a><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>');*/
+							html_text = html_text + '<li><a rel="'+venue.location.lat+'|'+venue.location.lng+'" id="'+venue.name+'" name="'+ venue.location.address +'" onClick="selectVenueDestinoDA(this.id,this.name,this.rel)"><h4>' + venue.name + '</h4>' +
+							                         '<p>'+ venue.location.address + '</p></a></li>';
+					   });		   
+					   $('<div>').simpledialog2({
+								mode: 'blank',
+								headerText: 'Escoje el destino:',
+								headerClose: true,
+								blankContent: 
+								  html_text + '</ul>' +
+								  "<a rel='close' data-role='button' href='#' >Cerrar</a>"
+							});
+						$('#peterete').listview(); 
+				});	
+				}
+				catch(err){alert(err.message);}
+			}
+			
+			function localJsonpCallback(json) {
+
+							$.each(json.FriendsList, function(key, friend) {
+								$('#friendsList_dua_fs').append('<input type="checkbox" name="check' + key + '" ' +
+								'id="check' + key + '" class="custom" />' +
+								'<label for="check' + key + '">' + friend.Name + '</label>');
+								//'<img for="check' + key + '" src="' + friend.PhotoURL + '"/>');
+								//+ val.PhotoUrl + '"/>' +
+								//'<input type="checkbox" name="'+ val.idUser +'"/>' +
+								//'<h4>' + val.Name + '</h4>' +
+					            //'</a></li>');
+							}); 
+                /*}
+                else {
+                    alert('Err:'+json.Message);
+                }*/
+            }
+			
+						/*success: function(json) {
+							//alert("success");
+							$('#friendsList_dua').append('<li data-role="fieldcontain"><fieldset id="friendsList_dua_fs" data-role="controlgroup">' +
+															'<legend>Selecciona a quien pedir el aventon:</legend>');
+							$.each(json.FriendsList, function(key, friend) {
+								$('#friendsList_dua_fs').append('<input type="checkbox" name="check' + key + '" ' +
+								'id="check' + key + '" class="custom" />' +
+								'<label for="check' + key + '">' + friend.Name + '</label>');
+								//+ val.PhotoUrl + '"/>' +
+								//'<input type="checkbox" name="'+ val.idUser +'"/>' +
+								//'<h4>' + val.Name + '</h4>' +
+					            //'</a></li>');
+							}); 
+							$('#friendsList_dua').append('</fieldset></li>').trigger("create");
+							$('#friendsList_dua').listview('refresh');
+						},
+						error: function(a) {
+						 // x.responseText should have what's wrong
+						    alert('error: '+ a.responseText);
+						}
+				});					
+				console.log('sale de getFriends');
+
+			}*/
+			
+			function clearFriendsList(){
+				$('#friendsList_dua').empty();
+			}
+			
+			
+	function probarPusher() {
+  	
+	Pusher.log = function( msg ) {
+	if( window.console && window.console.log ) {
+			window.console.log( msg );
+			}	
+	};
+  	
+  	// Connect
+  	var pusher = new Pusher('c1c5e53e2c8e5295a772');
+  	pusher.connection.bind('state_change', connectionStateChange);
+  	
+  	function connectionStateChange(state) {
+  		console.log(state.current);
+  	}
+  	
+  	// Subscribe
+  	var channel = pusher.subscribe('user-' + window.localStorage.getItem("fbUserId"));
+  	channel.bind('pusher:subscription_succeeded', subscriptionSucceeded);
+  	
+  	function subscriptionSucceeded() {
+  		console.log("subscriptionSucceeded");
+  	}
+  	
+  	channel.bind('rides', handleMyEvent);
+  	
+  	function handleMyEvent( data ) {
+  		alert(JSON.stringify(data, null, 2));
+  	}
+  	
+  }
+			

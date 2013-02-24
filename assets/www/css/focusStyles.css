@@ -1,0 +1,15 @@
+.notifTitle
+{
+font-weight:bolder;
+}
+
+.notifMessage
+{
+color:grey;
+font-weight:lighter; 
+font-style:italic;
+}
+.notifBody
+{
+font-weight:lighter;
+}

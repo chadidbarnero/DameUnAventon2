@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.css" />
+		<link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" /> 
+		
+		<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.1.0/jquery.mobile-1.1.0.min.js"></script>
+		<script type="text/javascript" src="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog2.min.js"></script>
+		<!--datetimepicker-->
+		<link href="css/mobiscroll-2.0rc3.custom.min.css" rel="stylesheet" type="text/css" />
+		<script src="js/mobiscroll-2.0rc3.custom.min.js" type="text/javascript"></script>
+
+    </head>
+	<body>
+	 
+		<div data-role="page" data-theme="a" id="loginPage">	
+			<div data-role="content">
+				<a data-role="button" onclick="login()" data-transition="none">Login</a>
+				<a data-role="button" href="#home" data-transition="none">Login test</a>
+			</div>
+		</div>	
+		
+		<div data-role="page" data-theme="a" id="home">
+		    <div data-role="header" data-position="fixed">
+				<h1>Dameunaventon</h1>
+		    </div>
+			<div data-role="content">	
+				<div data-role="controlgroup">
+					<a data-role="button" href="#pedirAventon" data-transition="none">Pedir aventon!</a>
+					<a data-role="button" href="#darAventon" data-transition="none">Ofrecer aventon!</a>
+					<a data-role="button" href="#invitePage" data-transition="none">Invitar a mis amigos</a>
+					<a data-role="button" href="#duaFriendsListPage" data-transition="none" onclick="getDuaFriends()">Lista de amigos</a>
+					<a data-role="button" onclick="mapa()" data-transition="none">Mapa</a>
+					<a data-role="button" onclick="probarPusher()" data-transition="none">Probar pusher</a>
+				</div>
+				<a data-role="button" onclick="logout()" href="#loginPage" data-transition="none">Logout</a>
+				<!--<button onclick="getSession()">Get session</button>-->
+				<!--<a data-role="button" onclick="getLoginStatus()">Get login</a>-->
+				<!--<a data-role="button" onclick="facebookWallPost()">facebookWallPost</a>-->
+				<!--<a data-role="button" onclick="publishStoryFriend()">friendstory</a>-->
+			</div>
+		</div>
+		
+		<div data-role="page" data-theme="a" id="duaFriendsListPage">	
+		    <a data-role="button" href="#home" data-ajax="false">Back</a>
+			<div data-role="content">
+				<ul id="duaFriendsList" data-role="listview" data-filter="true"></ul>
+			</div>
+		</div>
+		
+		<div data-role="page" data-theme="a" id="friendsDetailsPage">	
+		    <a data-role="button" href="#duaFriendsListPage" data-ajax="false">Back</a>
+			<div data-role="content">
+				<img id="userPic"/>
+				<div id="userDetails">
+				   <h3 id="fullName"></h3>
+				   <p id="email"></p>
+				   <p id="other"></p>
+				</div>
+			</div>
+		</div>
+		
+		<div data-role="page" data-theme="a" id="invitePage">	
+		    <a data-role="button" href="#home" data-ajax="false">Back</a>
+			<div data-role="content">
+				<div data-role="controlgroup" data-mini="false">
+					<a data-role="button" onclick="getFriendsFB()" href="#friendsPage" data-transition="none">Enviar invitaciones privadas..</a>
+					<a data-role="button" onclick="facebookWallPost()" data-transition="none">Invitar a todos en mi wall!</a>
+				</div>
+			</div>
+		</div>
+		
+		<div data-role="page" data-theme="a" id="friendsPage">	
+		    <a data-role="button" href="#home" data-transition="none">Back</a>
+			<div data-role="content">
+				<ul id="friendsList" data-role="listview" data-filter="true"></ul>
+				<p>Cargando lista de amigos...</p>
+			</div>
+		</div>	
+		
+		<div data-role="page" data-theme="a" id="pedirAventon">	
+			<div data-role="content">
+			    <div data-role="fieldcontain">
+					 <label for="origenPA">Lugar de origen: </label>
+					 <input type="text" name="origenPA" id="origenPA" value=""/>
+					 <a data-role="button" name="btnPopUpPA" id="btnPopUpPA" onclick="getNearVenuesOrigen()" data-transition="none">Buscar</a>			 
+				</div>
+				<div data-role="fieldcontain">
+					 <label for="destinoPA">Destino: </label>
+					 <input type="text" name="destinoPA" id="destinoPA" value=""/>
+					 <a data-role="button" name="btnPopUpPA" id="btnPopUpPA" onclick="getNearVenuesDestino()" data-transition="none">Buscar</a>			 
+				</div>
+				<div data-role="fieldcontain">
+					 <label for="fechaPA">Fecha y hora: </label>
+					 <input type="text" name="fechaPA" id="fechaPA" value=""/>
+				</div>
+				<!--fieldset data-role="controlgroup" data-mini="false">
+					<legend>Escoge el tipo de Aventón que quieres pedir:</legend>
+						<input type="radio" name="radio-choice-1" id="radio-choice-1" value="privado" onClick="getDuaFriends()"/>
+						<label for="radio-choice-1">Privado</label>
+						<input type="radio" name="radio-choice-1" id="radio-choice-2" value="publico" checked="checked" onclick="clearFriendsList()"/>
+						<label for="radio-choice-2">Público (Todos tus amigos)</label>
+				</fieldset-->
+				<div data-role="fieldcontain">
+					<form id="form_pedirAv">	
+							<ul id="friendsList_dua" data-role="listview" data-filter="false" data-mini="false"></ul>
+					</form>
+				</div>	
+				<a data-role="button" onclick="pedirAv()" id="pA">Pedir aventón!</a>
+			</div>
+			<a data-role="button" href="#home" id="backPA" data-transition="none">Back</a>
+		</div>
+		
+		<div data-role="page" data-theme="a" id="darAventon">	
+			<div data-role="content">
+			    <div data-role="fieldcontain">
+					 <label for="origenDA">Lugar de origen: </label>
+					 <input type="text" name="origenDA" id="origenDA" value=""/>
+					 <a data-role="button" name="btnPopUpDA" id="btnPopUpDA" onclick="getNearVenuesOrigenDA()" data-transition="none">Buscar</a>			 
+				</div>
+				<div data-role="fieldcontain">
+					 <label for="destinoDA">Destino: </label>
+					 <input type="text" name="destinoDA" id="destinoDA" value=""/>
+					 <a data-role="button" name="btnPopUpDA" id="btnPopUpDA" onclick="getNearVenuesDestinoDA()" data-transition="none">Buscar</a>			 
+				</div>
+				<div data-role="fieldcontain">
+					 <label for="fechaDA">Fecha y hora: </label>
+					 <input type="text" name="fechaDA" id="fechaDA" value=""/>
+				</div>
+				<a data-role="button" onclick="darAv()" id="dA" >Ofrecer aventón!</a>
+			</div>
+			<a data-role="button" href="#home" id="backDA" data-transition="none">Back</a>
+		</div>
+		
+        <!--<script src="http://localhost:8080/target/target-script-min.js#anonymous"></script>-->
+        <div id="fb-root"></div>
+        <!-- cordova -->
+		<script src="js/cordova-1.8.1.js"></script>
+		<!-- webSocket for Pusher -->
+		<script src="js/websocket.js"></script>
+		<!-- Pusher lib --> 
+        <script src="http://js.pusher.com/1.12/pusher.js"></script>
+	    <!-- cordova facebook plugin -->
+		<script type="text/javascript" charset="utf-8" src="js/cdv-plugin-fb-connect.js"></script>
+	    <!-- facebook js sdk -->
+		<script src="js/facebook_js_sdk.js"></script>
+		<!--js dameunAventon-->
+	    <script src="js/dameunav-mov.js" type="text/javascript"></script>
+		<!--script src="js/dua-pusherClient.js"></script-->
+		<script>
+			
+            if ((typeof cordova == 'undefined') && (typeof Cordova == 'undefined')) alert('Cordova variable does not exist. Check that you have included cordova.js correctly');
+            if (typeof CDV == 'undefined') alert('CDV variable does not exist. Check that you have included cdv-plugin-fb-connect.js correctly');
+            if (typeof FB == 'undefined') alert('FB variable does not exist. Check that you have included the Facebook JS SDK file.');
+			
+            document.addEventListener('deviceready', function() {
+                                      try {
+                                      //alert('Device is ready! Make sure you set your app_id below this alert.');
+									  console.log('device ready: index');
+                                      FB.init({ appId: "132921496839607", nativeInterface: CDV.FB, useCachedDialogs: false });
+                                      }catch (e) {
+										alert(e);
+                                      }
+                                      }, false);
+            </script>
+        <div id="log"></div>
+	</body>
+</html>

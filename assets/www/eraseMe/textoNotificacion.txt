@@ -1,0 +1,14 @@
+{
+	"event": "3-1",
+	"data": {
+		"notificationId": 181,
+		"message": "Solicit+¦ un avent+¦n desde My home hasta Mi Placita Mercado",
+		"userRequestingPhotoURL": "https://graph.facebook.com/100002508654290/picture",
+		"userRequestingName": "Pedazo Tajada",
+		"userRequestingAuthKey": "100002508654290",
+		"userOfferingPhotoURL": "https://graph.facebook.com/613135170/picture",
+		"userOfferingName": "David Camargo",
+		"userOfferingAuthKey": "613135170"
+	},
+	"channel": "user-613135170"
+}
