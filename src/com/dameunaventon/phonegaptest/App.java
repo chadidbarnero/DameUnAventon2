@@ -29,8 +29,8 @@ public class App extends DroidGap {
     	super.setBooleanProperty("keepRunning", true); 
         super.onCreate(savedInstanceState);
         super.setIntegerProperty("splashscreen", R.drawable.splash);
+        setIntegerProperty("loadUrlTimeoutValue", 70000);
         super.loadUrl("file:///android_asset/www/index.html",6000);
-        //setIntegerProperty("loadUrlTimeoutValue", 1000000);
         
         this.appView.addJavascriptInterface(new WebSocketFactory(this), "WebSocketFactory");
     }

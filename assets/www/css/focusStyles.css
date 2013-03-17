@@ -13,3 +13,9 @@ font-style:italic;
 {
 font-weight:lighter;
 }
+
+#logo
+{
+background:url(../images/logo.png) no-repeat center center;
+height:40px;
+}

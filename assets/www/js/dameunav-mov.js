@@ -32,8 +32,14 @@
 			//FB.init({ appId: "132921496839607", nativeInterface: CDV.FB, useCachedDialogs: false });
 			
 			//date time picker
+			
+			//para que funcionen los transitions
+			$.mobile.transitionFallbacks = "none";
+			
 			$("#fechaPA").scroller({ preset: 'datetime' }); 
 			$("#fechaDA").scroller({ preset: 'datetime' }); 
+			
+			window.localStorage.setItem("prevPageId","");
 			
 			function checkConnection() {
 				
@@ -52,9 +58,6 @@
 				
 			}
 
-
-			
-
 			//PUSHER TEST
 			   //$('#deviceProperties').html(deviceInfo)
 
@@ -68,7 +71,8 @@
 				window.localStorage.setItem('fbAccessToken','23983487439832');
 				window.localStorage.setItem("userCurrentLatitude","4.6838877");
 				window.localStorage.setItem("userCurrentLongitude","-74.070328");
-				validarOcrearUsuario2();
+				$.mobile.changePage('#page7',{transition: 'slidedown'});
+				//validarOcrearUsuario2();
 				//loadNotifications();
 
 			}
@@ -134,11 +138,11 @@
 									if(json.validateAndRegisterUserResult == true){
 										//alert("Todos tus amigos de facebook que ya esten en DameUnAventon han sido agregados a tu red de aventones, si deseas eliminar a alguien lo puedes hacer a continuacion en la opción Tus Amigos. ");
 										//getDuaFriends();
-										$.mobile.changePage('#page5');
+										$.mobile.changePage('#page7',{transition: 'slidedown'});
 									}
 								   }
 				});
-				$.mobile.changePage('#page5');
+				$.mobile.changePage('#page7',{transition: 'slidedown'});
 			}
 			
             function getLoginStatus() {
@@ -618,14 +622,15 @@
 			function getNearVenuesOrigen(){
 			
 				//*D console.log('entro a getNearVenues');
-				navigator.notification.activityStart();
+				//navigator.notification.activityStart();
 				//Check internet connection
-				var networkState = navigator.network.connection.type;
+				
+				/*var networkState = navigator.network.connection.type;
 				if (networkState == Connection.UNKNOWN || networkState == Connection.NONE){
 					alert("No hay conexion a internet, intenta de nuevo!");
 					$(location).attr('href',"#loginPage");
 					return;
-				}
+				}*/
 				
 				navigator.geolocation.getCurrentPosition(onSuccessGetLL, onErrorGetLL);
                 
@@ -647,7 +652,7 @@
 								  html_text + '</ul></div>'
 							});
 						$('#dialogList1').listview();
-						navigator.notification.activityStop();						
+						//navigator.notification.activityStop();						
 				});	
 				}
 				catch(err){
@@ -658,14 +663,15 @@
 			
 			function getNearVenuesDestino(){
 				//*D console.log('entro a getNearVenues');
-				navigator.notification.activityStart();
+				//navigator.notification.activityStart();
+				
 				//Check internet connection
-				var networkState = navigator.network.connection.type;
+				/*var networkState = navigator.network.connection.type;
 				if (networkState == Connection.UNKNOWN || networkState == Connection.NONE){
 					alert("No hay conexion a internet, intenta de nuevo!");
 					$(location).attr('href',"#loginPage");
 					return;
-				}
+				}*/
 				
 				navigator.geolocation.getCurrentPosition(onSuccessGetLL, onErrorGetLL);
 				var html_text = '<div><ul id="dialogList2" name="dialogList2">';
@@ -686,7 +692,7 @@
 								  html_text + '</ul></div>'
 							});
 						$('#dialogList2').listview(); 
-						navigator.notification.activityStop();
+						//navigator.notification.activityStop();
 				});
 				}
 				catch(err){alert(err.message);}
@@ -1078,9 +1084,15 @@ function onConfirm(buttonIndex) {
     //alert('You selected button ' + buttonIndex);
 }
 
-// Show a custom confirmation dialog
-//
 
+
+function wichPage(p_pageId){
+ window.localStorage.setItem("prevPageId",p_pageId);
+}
+
+function reverseNav(){
+ $.mobile.changePage('#' + window.localStorage.getItem("prevPageId"),{transition: 'slide'});
+}
 
 // Android / BlackBerry WebWorks (OS 5.0 and higher) / iPhone
 //
